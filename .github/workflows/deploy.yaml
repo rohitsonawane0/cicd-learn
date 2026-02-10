@@ -8,8 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Installing dependancies
-        run: pnpm i
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
       - name: Running build
         run: pnpm run build
   second-job:
