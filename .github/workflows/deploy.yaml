@@ -20,10 +20,9 @@ jobs:
         run: pnpm i
       - name: Running build
         run: pnpm run build
-  second-job:
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: second job 1 step
-        run: echo "second job 1"
-      - name: second 2
-        run: echo "second 2"
+      - name: deploy
+        run: echo "deploying"
