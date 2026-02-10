@@ -2,16 +2,16 @@ name: Build & deploy
 
 on:
   push:
-    branches: [dev, main]
+    branches: [dependant]
 
 jobs:
-  first-job:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: first-steps
-        run: echo "first step"
-      - name: second-step
-        run: echo "second step"
+      - name: Installing dependancies
+        run: pnpm i
+      - name: Running build
+        run: pnpm run build
   second-job:
     runs-on: ubuntu-latest
     steps:
