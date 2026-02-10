@@ -1,0 +1,20 @@
+name: Build & deploy
+
+on:
+  push: ["dev",main]
+
+jobs:
+  first-job:
+    runs-on: ubuntu-latest
+    steps:
+      -name: first-steps
+      run: echo "first step"
+      -name: second-step
+      run: echo "second step"
+  second-job:
+    runs-on: ubuntu-latest
+    steps:
+      -name: second job 1 step
+      run: echo "second job 1"
+      -name: second 2
+      run: echo "second 2"
