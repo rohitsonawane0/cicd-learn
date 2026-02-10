@@ -1,7 +1,7 @@
 name: Build & deploy
 
 on:
-  push: ["dev","main"]
+  push: [dev,main]
 
 jobs:
   first-job:
