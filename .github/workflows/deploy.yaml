@@ -17,7 +17,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image-tag: ${{ steps.meta.outputs.tags }}
+      image-tag: ${{ steps.set-tag.outputs.deploy_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -73,6 +73,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Set deploy tag
+        id: set-tag
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          DEPLOY_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dependant-${SHORT_SHA}"
+          echo "deploy_tag=${DEPLOY_TAG}" >> "$GITHUB_OUTPUT"
+          echo "Deploy tag: ${DEPLOY_TAG}"
+
   deploy:
     name: Deploy to Server
     needs: build
@@ -86,11 +94,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
-            # Navigate to app directory
-            cd /opt/app
-
             # Pull latest image
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dependant-${{ github.sha }}
+            docker pull ${{ needs.build.outputs.image-tag }}
 
             # Stop and remove old container
             docker stop app || true
@@ -102,7 +107,7 @@ jobs:
               --restart unless-stopped \
               -p 3000:3000 \
               -e NODE_ENV=production \
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dependant-${{ github.sha }}
+              ${{ needs.build.outputs.image-tag }}
 
             # Clean up old images
             docker image prune -af --filter "until=24h"
